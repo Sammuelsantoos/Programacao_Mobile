@@ -1,4 +1,4 @@
-import db from '../config/Database.js';
+import db from '../config/database.js';
 
 /**
  * Pure Fabrication: não existe no domínio — criado para separar persistência.
