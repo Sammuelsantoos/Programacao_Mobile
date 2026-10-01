@@ -1,45 +1,43 @@
-# ⚡ PROGRAMAÇÃO MOBILE API ⚡
+# API Programação Mobile
 
 <p align="center">
-  <b>Uma arquitetura de backend de nível empresarial, altamente modular, robusta e desenvolvida sob medida para ecossistemas mobile de alta performance.</b>
+  <b>API REST desenvolvida em Node.js com arquitetura em camadas para a atividade acadêmica da disciplina de Programação Mobile.</b>
 </p>
 
 <p align="center">
-  <code>Node.js</code> &bull; <code>Express</code> &bull; <code>PostgreSQL</code> &bull; <code>JWT Authentication</code> &bull; <code>Layered Architecture</code>
+  <code>Node.js</code> &bull; <code>Express</code> &bull; <code>PostgreSQL</code> &bull; <code>JWT</code> &bull; <code>JavaScript</code>
 </p>
 
 ---
 
-## 💎 Visão Geral do Projeto
+## 📌 Sobre o Projeto
 
-Este repositório abriga o núcleo de serviços e regras de negócio para aplicações mobile modernas. O projeto foi meticulosamente desenhado priorizando **escalabilidade**, **segurança de ponta a ponta**, **tratamento preditivo de falhas** e uma **separação estrita de responsabilidades (SoC)** através de uma arquitetura em camadas bem delimitada.
-
----
-
-## 🛠️ Stack Tecnológica & Ecossistema
-
-O projeto integra tecnologias modernas e consolidadas no desenvolvimento backend contemporâneo:
-
-* **Ambiente de Execução:** `Node.js` (Runtime assíncrono orientado a eventos de altíssima performance)
-* **Framework Web:** `Express` (Gerenciamento de rotas minimalista, flexível e altamente extensível)
-* **Persistência de Dados:** `PostgreSQL` (Banco de dados relacional robusto para integridade transacional complexa)[cite: 1]
-* **Segurança & Sessões:** `JSON Web Token (JWT)` (Autenticação stateful/stateless segura para clientes mobile)[cite: 1]
+Este projeto consiste em uma API backend desenvolvida como atividade prática para a faculdade. O sistema implementa o gerenciamento de usuários, autenticação baseada em tokens JWT e persistência de dados em banco relacional.
 
 ---
 
-## 📐 Arquitetura & Estrutura de Diretórios
+## 🚀 Tecnologias Utilizadas
 
-A base de código segue rigorosamente os princípios de Clean Code e Domain-Driven design patterns voltados a serviços web. Cada diretório possui uma responsabilidade única e isolada[cite: 1]:
+* **Node.js**
+* **Express**
+* **PostgreSQL**
+* **JWT (JSON Web Token)**
+
+---
+
+## 📂 Estrutura do Projeto
+
+A organização dos diretórios do projeto reflete exatamente os módulos implementados:
 
 ```text
 src/
-├── 📂 config/         # Configurações globais (Conexão com banco de dados, variáveis de ambiente)
-├── 📂 controllers/    # Camada de Apresentação (Gerencia requisições HTTP, status codes e respostas)
-├── 📂 middlewares/    # Interceptadores de ciclo de vida (Guardas de autenticação JWT e tratamento global de erros)
-├── 📂 models/         # Definições estruturais de dados e mapeamento relacional
-├── 📂 repositories/   # Camada de Persistência (Consultas SQL diretas e abstração de acesso ao banco)
-├── 📂 routes/         # Roteadores modulares para mapeamento de endpoints da API
-├── 📂 services/       # Camada de Regra de Negócio (Lógica pura isolada de frameworks e protocolos)
-├── 📂 utils/          # Classes utilitárias e gerador de erros operacionais personalizados (AppError)
-├── 📄 app.js          # Configuração centralizada do Express, middlewares globais e rotas principais
-└── 📄 server.js       # Inicializador do processo de escuta e bootstrap do servidor Node.js
+├── config/         # Configurações de banco de dados e ambiente (database.js, env.js)[cite: 1]
+├── controllers/    # Controladores de usuário (usuario.controller.js)[cite: 1]
+├── middlewares/    # Interceptadores de autenticação e tratamento de erros (auth.middleware.js, error.middleware.js)[cite: 1]
+├── models/         # Modelos de dados (usuario.model.js)[cite: 1]
+├── repositories/   # Camada de dados (usuario.repository.js)[cite: 1]
+├── routes/         # Definição e agrupamento de rotas (index.js, usuario.routes.js)[cite: 1]
+├── services/       # Regras de negócio (usuario.service.js)[cite: 1]
+├── utils/          # Tratamento de erros customizados (AppError.js)[cite: 1]
+├── app.js          # Configuração do Express[cite: 1]
+└── server.js       # Inicialização do servidor[cite: 1]
