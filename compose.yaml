@@ -1,0 +1,12 @@
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      JWT_SECRET: ${JWT_SECRET:-local-dev-secret-change-me}
+    volumes:
+      - ./sistema.db:/app/sistema.db
+    restart: unless-stopped

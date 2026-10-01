@@ -1,4 +1,4 @@
-import db from './config/Database.js';
+import db from './config/database.js';
 import MedicoRepository from './repositories/MedicoRepository.js';
 import PacienteRepository from './repositories/PacienteRepository.js';
 import MedicamentoRepository from './repositories/MedicamentoRepository.js';
