@@ -353,10 +353,3 @@ docker-compose logs -f
 
 
 ---
-
-
-<div align="center">
-
-**Desenvolvido com 💙 na UFC - Campus Quixadá**
-
-</div>
