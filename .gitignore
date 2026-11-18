@@ -1,13 +1,56 @@
-/vendor
-/node_modules
-/public/storage
-Homestead.yaml
-Homestead.json
+# Dependências do Node.js
+node_modules/
+
+# Variáveis de ambiente e configurações locais
 .env
-.logs.log
-*.txt
-error_log
-.lock*
-*.csv
-.htaccess
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs
+logs/
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Bancos SQLite locais e arquivos auxiliares
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Saídas de build, cobertura e caches
+/dist/
+/build/
+/coverage/
+.nyc_output/
+.cache/
+.eslintcache
+
+# Arquivos temporários
+/tmp/
+/temp/
+*.tmp
+*.swp
+*.swo
+*~
+
+# Configurações pessoais do editor
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Arquivos do sistema operacional
 .DS_Store
+Thumbs.db
+Desktop.ini
+
+# Mantenha package-lock.json, código-fonte e exemplos de configuração versionados.
