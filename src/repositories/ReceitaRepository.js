@@ -63,12 +63,13 @@ export default class ReceitaRepository extends BaseRepository {
     return receita;
   }
 
-  listar({ status, pacienteCpf } = {}) {
+  listar({ status, pacienteCpf, medicoId } = {}) {
     let sql = this.#sqlBase();
     const cond = [];
     const params = [];
     if (status) { cond.push('r.status = ?'); params.push(status); }
     if (pacienteCpf) { cond.push('p.cpf = ?'); params.push(pacienteCpf); }
+    if (medicoId) { cond.push('r.medico_id = ?'); params.push(medicoId); }
     if (cond.length) sql += ' WHERE ' + cond.join(' AND ');
     return this.db.prepare(sql).all(...params).map(Receita.fromRow);
   }

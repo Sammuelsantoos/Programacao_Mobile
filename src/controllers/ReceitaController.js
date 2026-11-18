@@ -9,17 +9,17 @@ export default class ReceitaController {
     res.status(201).json({ id: receita.id, codigoRetirada: receita.codigoRetirada });
   });
 
-  listar = handler((req, res) => res.json(this.#service.listar(req.query).map((r) => r.toJSON())));
+  listar = handler((req, res) => res.json(this.#service.listar({ ...req.query, medicoId: req.usuario.perfil === 'medico' ? req.usuario.id : undefined }).map((r) => r.toJSON())));
 
-  buscarPorId = handler((req, res) => res.json(this.#service.buscarPorId(req.params.id).toJSON()));
+  buscarPorId = handler((req, res) => res.json(this.#service.buscarPorId(req.params.id, req.usuario).toJSON()));
 
   // Rota pública (farmácia) — sem autenticação no original
   buscarPorCodigo = handler((req, res) => res.json(this.#service.buscarPorCodigo(req.params.codigo).toJSON()));
 
-  atualizar = handler((req, res) => { this.#service.atualizar(req.params.id, req.body); res.json({ ok: true }); });
+  atualizar = handler((req, res) => { this.#service.atualizar(req.params.id, req.body, req.usuario); res.json({ ok: true }); });
 
   cancelar = handler((req, res) => {
-    const r = this.#service.cancelar(req.params.id);
+    const r = this.#service.cancelar(req.params.id, req.usuario);
     res.json({ ok: true, status: r.status });
   });
 }

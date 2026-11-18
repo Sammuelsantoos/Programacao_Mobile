@@ -1,6 +1,6 @@
 import Receita from '../models/Receita.js';
 import ReceitaItem from '../models/ReceitaItem.js';
-import { BusinessError, NotFoundError } from '../utils/errors.js';
+import { BusinessError, NotFoundError, ForbiddenError } from '../utils/errors.js';
 
 export default class ReceitaService {
   #receitaRepo; #pacienteRepo; #medicamentoRepo;
@@ -31,7 +31,7 @@ export default class ReceitaService {
 
     // Validação em bloco (Information Expert: cada Medicamento sabe existir)
     for (const item of itens) {
-      if (!item.medicamentoId || !item.quantidade || item.quantidade <= 0) {
+      if (!item.medicamentoId || !Number.isInteger(item.quantidade) || item.quantidade <= 0) {
         throw new BusinessError('Cada item precisa de medicamentoId e quantidade > 0');
       }
       if (!this.#medicamentoRepo.buscarPorId(item.medicamentoId)) {
@@ -57,9 +57,10 @@ export default class ReceitaService {
 
   listar(filtros) { return this.#receitaRepo.listar(filtros); }
 
-  buscarPorId(id) {
+  buscarPorId(id, usuario) {
     const r = this.#receitaRepo.buscarPorIdComItens(id);
     if (!r) throw new NotFoundError('Receita não encontrada');
+    if (usuario?.perfil === 'medico' && r.medicoId !== usuario.id) throw new ForbiddenError('Você só pode gerenciar suas próprias receitas');
     return r;
   }
 
@@ -69,13 +70,14 @@ export default class ReceitaService {
     return r;
   }
 
-  atualizar(id, dados) {
-    if (!this.#receitaRepo.atualizar(id, dados)) throw new NotFoundError('Receita não encontrada');
+  atualizar(id, dados, usuario) {
+    const receita = this.buscarPorId(id, usuario);
+    if (dados.status !== undefined && dados.status !== receita.status) throw new BusinessError('O status é atualizado pela retirada ou pelo cancelamento da receita');
+    if (!this.#receitaRepo.atualizar(id, { observacoes: dados.observacoes })) throw new NotFoundError('Receita não encontrada');
   }
 
-  cancelar(id) {
-    const r = this.#receitaRepo.buscarPorId(id);
-    if (!r) throw new NotFoundError('Receita não encontrada');
+  cancelar(id, usuario) {
+    const r = this.buscarPorId(id, usuario);
     r.cancelar(); // regra no domínio
     this.#receitaRepo.atualizarStatus(r.id, r.status);
     return r;
