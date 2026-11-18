@@ -4,15 +4,19 @@ import PacienteRepository from './repositories/PacienteRepository.js';
 import MedicamentoRepository from './repositories/MedicamentoRepository.js';
 import ReceitaRepository from './repositories/ReceitaRepository.js';
 import RetiradaRepository from './repositories/RetiradaRepository.js';
+import FarmaceuticoRepository from './repositories/FarmaceuticoRepository.js';
+import Farmaceutico from './models/Farmaceutico.js';
+import MedicoService from './services/MedicoService.js';
+import MedicoController from './controllers/MedicoController.js';
+import ProfissionalService from './services/ProfissionalService.js';
+import ProfissionalController from './controllers/ProfissionalController.js';
 
 import AuthService from './services/AuthService.js';
-import MedicoService from './services/MedicoService.js';
 import PacienteService from './services/PacienteService.js';
 import MedicamentoService from './services/MedicamentoService.js';
 import ReceitaService from './services/ReceitaService.js';
 import RetiradaService from './services/RetiradaService.js';
 
-import MedicoController from './controllers/MedicoController.js';
 import PacienteController from './controllers/PacienteController.js';
 import MedicamentoController from './controllers/MedicamentoController.js';
 import ReceitaController from './controllers/ReceitaController.js';
@@ -20,14 +24,16 @@ import RetiradaController from './controllers/RetiradaController.js';
 
 // Repositórios
 const medicoRepo = new MedicoRepository();
+const farmaceuticoRepo = new FarmaceuticoRepository();
 const pacienteRepo = new PacienteRepository();
 const medicamentoRepo = new MedicamentoRepository();
 const receitaRepo = new ReceitaRepository();
 const retiradaRepo = new RetiradaRepository();
 
 // Serviços
-const authService = new AuthService(medicoRepo);
+const authService = new AuthService(medicoRepo, farmaceuticoRepo);
 const medicoService = new MedicoService(medicoRepo);
+const farmaceuticoService = new ProfissionalService(farmaceuticoRepo, Farmaceutico, 'crf');
 const pacienteService = new PacienteService(pacienteRepo);
 const medicamentoService = new MedicamentoService(medicamentoRepo);
 const receitaService = new ReceitaService({
@@ -45,6 +51,7 @@ const retiradaService = new RetiradaService({
 // Controllers
 export const controllers = {
   medico: new MedicoController(medicoService, authService),
+  farmaceutico: new ProfissionalController(farmaceuticoService, authService, 'farmaceutico'),
   paciente: new PacienteController(pacienteService),
   medicamento: new MedicamentoController(medicamentoService),
   receita: new ReceitaController(receitaService),

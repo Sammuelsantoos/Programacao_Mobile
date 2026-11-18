@@ -15,7 +15,7 @@ export default class MedicoRepository extends BaseRepository {
   }
 
   buscarPorEmail(email) {
-    const row = this.db.prepare('SELECT * FROM medicos WHERE email = ?').get(email);
+    const row = this.db.prepare('SELECT * FROM medicos WHERE lower(email) = lower(?)').get(email);
     return row ? Medico.fromRow(row) : null;
   }
 

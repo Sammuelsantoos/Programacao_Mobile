@@ -6,17 +6,17 @@ export default class RetiradaRepository extends BaseRepository {
 
   criar(retirada) {
     const info = this.db.prepare(`
-      INSERT INTO retiradas (receita_id, receita_item_id, farmaceutico_nome, quantidade)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO retiradas (receita_id, receita_item_id, farmaceutico_nome, farmaceutico_id, quantidade)
+      VALUES (?, ?, ?, ?, ?)
     `).run(
       retirada.receitaId, retirada.receitaItemId,
-      retirada.farmaceuticoNome, retirada.quantidade
+      retirada.farmaceuticoNome, retirada.farmaceuticoId, retirada.quantidade
     );
     retirada.id = info.lastInsertRowid;
     return retirada;
   }
 
-  listarComDetalhes({ codigoRetirada } = {}) {
+  listarComDetalhes({ codigoRetirada, medicoId } = {}) {
     let sql = `
       SELECT rt.*, r.codigo_retirada, p.nome AS paciente_nome,
              m.nome AS medicamento_nome, m.dosagem
@@ -27,7 +27,10 @@ export default class RetiradaRepository extends BaseRepository {
       JOIN medicamentos m    ON m.id = ri.medicamento_id
     `;
     const params = [];
-    if (codigoRetirada) { sql += ' WHERE r.codigo_retirada = ?'; params.push(codigoRetirada); }
+    const conditions = [];
+    if (codigoRetirada) { conditions.push('r.codigo_retirada = ?'); params.push(codigoRetirada); }
+    if (medicoId) { conditions.push('r.medico_id = ?'); params.push(medicoId); }
+    if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
     sql += ' ORDER BY rt.data_retirada DESC';
     return this.db.prepare(sql).all(...params).map(Retirada.fromRow);
   }

@@ -21,7 +21,7 @@ class DatabaseConnection {
     if (DatabaseConnection.#instance) {
       throw new Error('Use DatabaseConnection.getInstance()');
     }
-    const dbPath = fileURLToPath(new URL('../../sistema.db', import.meta.url));
+    const dbPath = process.env.DATABASE_PATH || fileURLToPath(new URL('../../sistema.db', import.meta.url));
     this.#db = new Database(dbPath);
     this.#db.pragma('foreign_keys = ON');
     this.#criarSchema();
@@ -43,6 +43,14 @@ class DatabaseConnection {
         cpf TEXT NOT NULL UNIQUE,
         data_nascimento TEXT,
         telefone TEXT,
+        criado_em TEXT DEFAULT CURRENT_TIMESTAMP
+      );
+      CREATE TABLE IF NOT EXISTS farmaceuticos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        crf TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL UNIQUE,
+        senha_hash TEXT NOT NULL,
         criado_em TEXT DEFAULT CURRENT_TIMESTAMP
       );
       CREATE TABLE IF NOT EXISTS medicamentos (
@@ -86,6 +94,10 @@ class DatabaseConnection {
         FOREIGN KEY (receita_item_id) REFERENCES receita_itens(id)
       );
     `);
+    // Migração aditiva: retiradas antigas mantêm os dados originais.
+    if (!this.#db.pragma('table_info(retiradas)').some(column => column.name === 'farmaceutico_id')) {
+      this.#db.exec('ALTER TABLE retiradas ADD COLUMN farmaceutico_id INTEGER REFERENCES farmaceuticos(id)');
+    }
   }
 
   get raw() { return this.#db; }

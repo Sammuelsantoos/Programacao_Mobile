@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireRoles } from '../middlewares/auth.js';
 
 export default function receitasRouter(controller, auth) {
   const router = Router();
@@ -6,10 +7,10 @@ export default function receitasRouter(controller, auth) {
   router.get('/codigo/:codigo', controller.buscarPorCodigo);
 
   router.use(auth);
-  router.post('/', controller.emitir);
+  router.post('/', requireRoles('medico'), controller.emitir);
   router.get('/', controller.listar);
   router.get('/:id', controller.buscarPorId);
-  router.put('/:id', controller.atualizar);
-  router.delete('/:id', controller.cancelar);
+  router.put('/:id', requireRoles('medico'), controller.atualizar);
+  router.delete('/:id', requireRoles('medico'), controller.cancelar);
   return router;
 }

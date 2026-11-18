@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import { fileURLToPath } from 'node:url';
 import { controllers, authService } from './container.js';
 import { makeAuthMiddleware } from './middlewares/auth.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 import medicosRouter from './routes/medicos.js';
+import farmaceuticosRouter from './routes/farmaceuticos.js';
 import pacientesRouter from './routes/pacientes.js';
 import medicamentosRouter from './routes/medicamentos.js';
 import receitasRouter from './routes/receitas.js';
@@ -17,10 +19,13 @@ export function criarApp() {
 
   const auth = makeAuthMiddleware(authService);
 
-  app.get('/', (req, res) => res.json({
+  app.use(express.static(fileURLToPath(new URL('../public', import.meta.url))));
+
+  app.get('/api', (req, res) => res.json({
     sistema: 'Sistema de Receitas e Retirada de Medicamentos',
     rotas: {
       medicos: '/medicos',
+      farmaceuticos: '/farmaceuticos',
       pacientes: '/pacientes',
       medicamentos: '/medicamentos',
       receitas: '/receitas',
@@ -29,6 +34,7 @@ export function criarApp() {
   }));
 
   app.use('/medicos', medicosRouter(controllers.medico, auth));
+  app.use('/farmaceuticos', farmaceuticosRouter(controllers.farmaceutico, auth));
   app.use('/pacientes', pacientesRouter(controllers.paciente, auth));
   app.use('/medicamentos', medicamentosRouter(controllers.medicamento, auth));
   app.use('/receitas', receitasRouter(controllers.receita, auth));

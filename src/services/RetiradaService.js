@@ -1,5 +1,5 @@
 import Retirada from '../models/Retirada.js';
-import { BusinessError, NotFoundError } from '../utils/errors.js';
+import { BusinessError, NotFoundError, ForbiddenError } from '../utils/errors.js';
 
 export default class RetiradaService {
   #retiradaRepo; #receitaRepo; #medicamentoRepo; #db;
@@ -11,7 +11,7 @@ export default class RetiradaService {
     this.#db = database;
   }
 
-  registrar({ codigoRetirada, farmaceuticoNome, itens }) {
+  registrar({ codigoRetirada, farmaceuticoNome, farmaceuticoId, itens }) {
     if (!codigoRetirada || !Array.isArray(itens) || itens.length === 0) {
       throw new BusinessError('codigoRetirada e itens[] são obrigatórios');
     }
@@ -26,7 +26,7 @@ export default class RetiradaService {
         // o próprio ReceitaItem decide se pode ser retirado;
         // o próprio Medicamento decide se tem estoque.
         const item = receita.encontrarItem(it.receitaItemId);
-        if (!item.podeRetirar(it.quantidade)) {
+        if (!Number.isInteger(it.quantidade) || !item.podeRetirar(it.quantidade)) {
           throw new BusinessError(`Item ${it.receitaItemId}: restam apenas ${item.quantidadeRestante} unidades`);
         }
 
@@ -44,6 +44,7 @@ export default class RetiradaService {
           receita_id: receita.id,
           receita_item_id: item.id,
           farmaceutico_nome: farmaceuticoNome ?? null,
+          farmaceutico_id: farmaceuticoId ?? null,
           quantidade: it.quantidade,
         }));
       }
@@ -58,9 +59,10 @@ export default class RetiradaService {
 
   listar(filtros) { return this.#retiradaRepo.listarComDetalhes(filtros); }
 
-  buscarPorId(id) {
+  buscarPorId(id, usuario) {
     const r = this.#retiradaRepo.buscarPorId(id);
     if (!r) throw new NotFoundError('Retirada não encontrada');
+    if (usuario?.perfil === 'medico' && this.#receitaRepo.buscarPorId(r.receitaId)?.medicoId !== usuario.id) throw new ForbiddenError('Retirada não pertence a uma receita sua');
     return r;
   }
 }
